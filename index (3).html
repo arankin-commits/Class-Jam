@@ -1,0 +1,327 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lock Breaker</title><style>
+:root{--bg:#0c141a;--ink:#eae7d6;--gold:#edc16b;--muted:#88999a;--mint:#89d3ad;--red:#f2786d}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px 'Trebuchet MS',sans-serif;overflow:hidden}button{font:inherit;cursor:pointer;color:inherit}button:focus-visible{outline:2px solid var(--mint);outline-offset:4px}button:disabled{opacity:.35;cursor:default}.shell{height:100dvh;display:flex;flex-direction:column;padding:26px 40px 18px;max-width:1700px;margin:auto}header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #29363b;padding-bottom:20px}.brand{font-weight:900;font-size:21px;letter-spacing:2px}.mark{color:var(--gold);margin-right:12px;font-size:26px}.sub{font:10px monospace;letter-spacing:3px;color:var(--muted);margin-top:5px}.pill{border:1px solid #354449;padding:9px 15px;border-radius:30px;font:11px monospace;letter-spacing:1px;color:var(--mint)}.stage{position:relative;flex:1;min-height:0;margin-top:20px;display:flex;align-items:center;justify-content:center}canvas{width:100%;max-height:100%;aspect-ratio:1200/650;object-fit:contain;border:1px solid #344047;border-radius:9px;background:#111e24}.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:auto;background:#0c141ada;backdrop-filter:blur(7px);border-radius:9px}.overlay.hidden{display:none}.home{width:100%;padding:40px 6%;display:grid;grid-template-columns:1.1fr 1fr;align-items:center;gap:30px;background:radial-gradient(ellipse at 80% 40%,#29403944,transparent 55%)}.eyebrow{color:var(--gold);font:11px monospace;letter-spacing:3px;text-transform:uppercase}h1{font-size:clamp(48px,6vw,88px);line-height:.91;letter-spacing:-4px;margin:24px 0}h1 em{color:var(--gold);font-style:normal}p{line-height:1.65;color:#a9b4b1;max-width:460px}.primary,.secondary{border:0;border-radius:4px;padding:15px 24px;font-weight:bold;letter-spacing:.3px}.primary{background:var(--gold);color:#192126}.secondary{background:#243238;border:1px solid #3a4b50}.actions{display:flex;gap:12px;margin:25px 0 17px}.meta{font:11px monospace;color:var(--muted)}.vault{position:relative;width:min(340px,30vw);height:min(340px,30vw);margin:auto;border-radius:50%;border:18px solid #35454a;box-shadow:0 0 0 2px #71817b,0 0 0 30px #18272d,0 0 0 31px #39494a,0 35px 80px #0008;background:repeating-conic-gradient(#53605a 0deg 1deg,#23353a 1deg 30deg);display:grid;place-items:center;transform:rotate(-12deg)}.vault:before{content:'';position:absolute;inset:24px;border:2px dashed #9c987155;border-radius:50%}.keyhole{width:100px;height:140px;background:#101a20;clip-path:polygon(30% 0,70% 0,100% 25%,100% 48%,70% 64%,85% 100%,15% 100%,30% 64%,0 48%,0 25%);box-shadow:0 0 20px #000}.vault-caption{text-align:center;margin-top:54px;font:10px monospace;letter-spacing:3px;color:var(--gold)}footer{padding-top:16px;display:flex;justify-content:space-between;gap:15px;color:var(--muted);font:11px monospace}kbd{background:#25343b;border:1px solid #455252;border-bottom:2px solid #5d6964;padding:3px 6px;border-radius:3px;color:#e1dfcd}.panel{width:min(640px,90%);padding:32px;background:#142229;border:1px solid #415152;border-radius:10px;box-shadow:0 25px 80px #0009}.panel h2{font-size:32px;margin:10px 0 14px;letter-spacing:-1px}.row{display:flex;justify-content:space-between;gap:16px;align-items:center;border-top:1px solid #324048;padding:14px 0}.row p{font-size:12px;margin:4px 0}.row strong{font-size:16px}.small{font:12px monospace;color:var(--muted)}.steps{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin:22px 0}.step{background:#1d2f35;padding:15px;border-radius:5px;font-size:13px;line-height:1.7}.step b{color:var(--gold);display:block}.puzzleButtons{display:flex;gap:12px;margin:25px 0}.pad{flex:1;background:#243d44;border:2px solid #51676b;padding:26px 5px;font:24px monospace;border-radius:7px}.pad.lit{background:var(--gold);color:#152329;box-shadow:0 0 30px #edc16b44}.beamgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:20px 0}.beamcell{height:52px;background:#21343b;border:1px solid #40575b;font:26px monospace;border-radius:4px}.beamcell.on{color:var(--gold);background:#4b4430}.track{height:50px;background:#24343a;position:relative;border-radius:4px;margin:25px 0;overflow:hidden}.zone{position:absolute;height:100%;background:#89d3ad55;border-inline:2px solid var(--mint)}.needle{position:absolute;width:4px;height:100%;background:var(--gold)}#toast{position:absolute;bottom:25px;left:50%;transform:translateX(-50%);padding:12px 20px;background:#142229ee;border:1px solid #64766d;border-radius:5px;pointer-events:none;text-align:center;max-width:90%;font-size:13px;opacity:0;transition:opacity .2s}.status{color:var(--gold);min-height:22px;font:13px monospace}.mute{background:transparent;border:0;color:var(--muted);font:11px monospace}@media(max-width:750px){.shell{padding:12px}.home{grid-template-columns:1fr;padding:24px}.art{display:none}h1{font-size:54px}footer{font-size:9px;line-height:2}.panel{padding:20px}.steps{gap:8px}.sub{font-size:8px}.pill{font-size:9px}header{padding-bottom:12px}.stage{margin-top:10px}}
+
+/* Keep tall Black Market listings fully reachable when the canvas is short. */
+.overlay{align-items:safe center}
+/* Heists are intentionally wordless outside of the puzzle interfaces. */
+.in-heist header,.in-heist footer{display:none}
+</style></head><body><div class="shell"><header><div style="display:flex;gap:18px;align-items:center"><button class="mute" id="flash" onclick="reducedFlash=!reducedFlash;this.textContent=reducedFlash?'ALERT STEADY':'ALERT PULSE'">ALERT PULSE</button><button class="mute" id="sound">SOUND OFF</button><span class="pill" id="bank">STASH $0</span></div></header><main class="stage"><canvas id="game" width="1200" height="650" aria-label="Lock Breaker platform game. Use keyboard controls listed below."></canvas><div id="overlay" class="overlay"></div><div id="alarm" aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;border:12px solid #ff302d;background:radial-gradient(ellipse,transparent 35%,#ff302d);opacity:0;z-index:5;border-radius:9px"></div></main><footer><span><kbd>A</kbd> <kbd>D</kbd> move · <kbd>W</kbd> <kbd>S</kbd> ladder · <kbd>SPACE</kbd> jump · <kbd>E</kbd> shrink · <kbd>Q</kbd> grow</span><span><kbd>F</kbd> interact · <kbd>SHIFT</kbd> dash · <kbd>ESC</kbd> pause</span></footer></div>
+<script>
+'use strict';
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),overlay=document.getElementById('overlay');
+let save={cash:0,speed:0,jump:0,hearts:0,double:false,dash:false,grip:false,best:0};try{Object.assign(save,JSON.parse(localStorage.getItem('lockbreaker-v1')||'{}'))}catch(e){}
+// All permanent bonuses are based on the ORIGINAL stat, never compounded between levels.
+const SPEED_BONUSES=[0,.05,.10,.20,.30,.45],JUMP_BONUSES=[0,.05,.10,.20,.30,.45];
+for(const [key,max] of [['speed',5],['jump',5],['hearts',2]])save[key]=Math.min(max,Math.max(0,Math.trunc(Number(save[key])||0)));
+function startingHearts(){return 1+save.hearts}
+function jumpMultiplier(){return Math.sqrt(1+JUMP_BONUSES[save.jump])} // Jump height ∝ launch speed squared.
+function upgradeCost(id){return id==='speed'?350*(save.speed+1):id==='jump'?450*(save.jump+1):id==='hearts'?750*(save.hearts+1):{double:650,dash:800,grip:500}[id]}
+function puzzlePayout(){return Math.max(5,Math.floor(Math.max(200,(300-elapsed)*12+800)/40))}
+let state='home',mode='heist',rooms=[],roomIndex=0,room,p,elapsed=0,penalty=0,seed=0,rng,keys={},last=0,worldTime=0,particles=[],toastUntil=0,soundOn=false,audio,puzzle=null,cameraShake=0,hearts=1,alarm=false,alarmAge=0,hunters=[],camX=0,camY=0,deathReason="",routeName="LOWER / SLOW",reducedFlash=false,earnedInRun=0;
+const names={plate:'Deadweight',memory:'Echo chamber',timing:'Split second',mirror:'Light work'};
+function persist(){try{localStorage.setItem('lockbreaker-v1',JSON.stringify(save))}catch(e){}document.getElementById('bank').textContent='STASH $'+save.cash.toLocaleString()}
+function tone(f=500,d=.08){if(!soundOn)return;try{audio??=new(window.AudioContext||window.webkitAudioContext)();const o=audio.createOscillator(),g=audio.createGain();o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(.06,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+d);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+d)}catch(e){}}
+document.getElementById('sound').onclick=()=>{soundOn=!soundOn;document.getElementById('sound').textContent=soundOn?'SOUND ON':'SOUND OFF';tone()};
+function toast(){} // Stage 6: no world/in-run instructional text.
+function syncPresentation(){document.body.classList.toggle('in-heist',state==='play'||state==='puzzle'||state==='paused')}
+function show(html){overlay.innerHTML=html;overlay.classList.remove('hidden');keys={};syncPresentation()}
+function hide(){overlay.classList.add('hidden');keys={};syncPresentation()}
+function home(){state='home';persist();show(`<div class="home"><div><h1>LOCK<br><em>BREAKER</em></h1><p>Shrink inside a high-security vault, break four mechanisms, and choose your route to each mechanism. After five minutes, patrollers come hunting.</p><div class="actions"><button class="primary" onclick="startRun()">Start a heist ↗</button><button class="secondary" onclick="tutorial()">Learn the ropes</button></div><button class="mute" style="padding:10px 0;color:#edc16b" onclick="shop()">Visit the black market →</button></div><div class="art"><div class="vault"><div class="keyhole"></div></div><div class="vault-caption">THE WORLD IS BIGGER ON THE INSIDE</div></div></div>`)}
+function tutorial(){state='tutorial';show(`<div class="panel"><div class="eyebrow">Field guide / 01</div><h2>Meet your smallest problem.</h2><p>You’re the notorious burglar “Mite.” The new locks are miniature security worlds. Unlock all four, then reach the green exit.</p><div class="steps"><div class="step"><b>01 / Move & jump</b>A / D to move. Space to jump.<br>W / S climbs marked ladders.</div><div class="step"><b>02 / Change scale</b>E shrinks, Q grows: three sizes.<br>Tiny fits beneath low lock teeth.</div><div class="step"><b>03 / Break mechanisms</b>F uses terminals. Push crates at full size. Hearts persist across all four rooms.</div><div class="step"><b>04 / Make it pay</b>Start with ${startingHearts()} ${startingHearts()===1?'heart':'hearts'} (buy up to 3). Hazards cost one heart. At 5:00, patrollers activate. Getting caught ends the run.</div></div><p class="small">Every chamber begins at one shared entrance and ends at one shared puzzle. The winding lower route takes 3–3.5× the expert route distance and needs no movement abilities; the technical middle path takes 1.5–2× and requires 1–2 abilities. The expert upper path requires Double Jump, Phase Dash, AND Magnetic Grip. Every route has mandatory tiny-only passages. Navigate each route’s physical obstacles. Missed jumps may drop to lower paths or hazards; R restarts the selected route at the entrance (+5 seconds, no heart lost).</p><div class="actions"><button class="primary" onclick="startRun(true)">Try the practice lock</button><button class="secondary" onclick="startRun()">I’m ready</button></div><button class="mute" onclick="home()">← Back</button></div>`)}
+function shop(){state='shop';persist();let items=[
+ ['speed','Fleet feet',`Movement speed: +${Math.round(SPEED_BONUSES[save.speed]*100)}% of base. ${save.speed<5?'Next: +'+Math.round(SPEED_BONUSES[save.speed+1]*100)+'%.':'Maximum reached.'}`,upgradeCost('speed'),save.speed>=5,`LEVEL ${save.speed}/5`],
+ ['jump','Jump height',`Jump height: +${Math.round(JUMP_BONUSES[save.jump]*100)}% of base. ${save.jump<5?'Next: +'+Math.round(JUMP_BONUSES[save.jump+1]*100)+'%.':'Maximum reached.'}`,upgradeCost('jump'),save.jump>=5,`LEVEL ${save.jump}/5`],
+ ['hearts','Extra hearts',`Start every run with ${startingHearts()} ${startingHearts()===1?'heart':'hearts'} (maximum 3).`,upgradeCost('hearts'),save.hearts>=2,`LEVEL ${save.hearts}/2`],
+ ['double','Double jump','Midair jump. Required on the fastest route.',upgradeCost('double'),save.double,''],
+ ['dash','Phase dash','Shift bursts through laser gates; required on the fastest route.',upgradeCost('dash'),save.dash,''],
+ ['grip','Magnetic grip','Hold into a wall and jump to wall-kick; required on the fastest route.',upgradeCost('grip'),save.grip,'']
+ ];show(`<div class="panel"><h2>Black market</h2><p>Your stash: <b style="color:#edc16b">$${save.cash.toLocaleString()}</b></p>${items.map(([id,title,desc,cost,owned,lvl])=>`<div class="row"><div><strong>${title}</strong> <span class="small">${lvl}</span><p>${desc}</p></div><button class="${owned?'secondary':'primary'}" ${owned||save.cash<cost?'disabled':''} onclick="buy('${id}',${cost})">${owned?'Owned':'$'+cost}</button></div>`).join('')}<div class="actions"><button class="primary" onclick="startRun()">Next heist ↗</button><button class="secondary" onclick="home()">Back</button></div><div class="small">Progress saves in this browser. Practice runs pay no cash. Bonuses use base stats, not stacking.</div></div>`)}
+function buy(id,cost){
+ const capped={speed:5,jump:5,hearts:2};
+ if(!(id in capped)&&!['double','dash','grip'].includes(id))return;
+ const owned=id in capped?save[id]>=capped[id]:save[id];
+ if(owned||cost!==upgradeCost(id)||save.cash<cost)return;
+ save.cash-=cost;if(id in capped)save[id]++;else save[id]=true;
+ tone(800);persist();shop();
+}
+function random(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}
+// Route lengths measure the actual forward/backtracking centerline, not a time modifier.
+// Every route is physically traversed. Consecutive beacons prevent skipping a detour.
+const ROUTE_META={slow:{name:'SLOW / WINDING',color:'#89d3ad'},mid:{name:'MIDDLE / TECHNICAL',color:'#83cbd2'},fast:{name:'FAST / EXPERT',color:'#edc16b'}};
+const ABILITY_NAMES={double:'Double Jump',dash:'Phase Dash',grip:'Magnetic Grip'};
+function routeDistance(legs,finishX,floor){let d=Math.abs(legs[0].a-70)+Math.abs(floor-legs[0].y);
+ for(let j=0;j<legs.length;j++){let q=legs[j];d+=Math.abs(q.b-q.a);if(j<legs.length-1)d+=Math.abs(q.y-legs[j+1].y)}
+ return d+Math.abs(legs.at(-1).y-floor)+Math.abs(finishX-legs.at(-1).b);
+}
+function mixChoices(list){for(let j=list.length-1;j>0;j--){let k=Math.floor(random()*(j+1));[list[j],list[k]]=[list[k],list[j]]}return list}
+function buildRoomPaths(i,fy){
+ const end=3400,finish=3475,first=180,fastY=320+Math.floor(random()*19),midYs=[465+Math.floor(random()*19),402+Math.floor(random()*15),465+Math.floor(random()*19)];
+ // Expert catwalks change altitude and the number of ledge sections between chambers.
+ const expertCount=i%2===0?3:4,fastStops=[first];
+ for(let j=1;j<expertCount;j++)fastStops.push(Math.round(first+(end-first)*j/expertCount+(random()-.5)*85));
+ fastStops.push(end);
+ const fastHeights=Array.from({length:expertCount},(_,j)=>fastY+([0,-50,22,-37][j])+Math.floor((random()-.5)*21));
+ const slowYs=[fy,700+Math.floor(random()*8),638+Math.floor(random()*9),576+Math.floor(random()*9),518+Math.floor(random()*12)];
+ let paths;
+ // Reject any geometry that would violate either of the requested length bands.
+ for(let tries=0;tries<200;tries++){
+   let midHigh=3070+Math.floor(random()*300),midLow=1430+Math.floor(random()*430),slowLow=480+Math.floor(random()*250),slowUpper=1240+Math.floor(random()*350);
+   paths={fast:{legs:Array.from({length:expertCount},(_,j)=>({a:fastStops[j],b:fastStops[j+1],y:fastHeights[j]}))},mid:{legs:[{a:first,b:midHigh,y:midYs[0]},{a:midHigh,b:midLow,y:midYs[1]},{a:midLow,b:end,y:midYs[2]}]},slow:{legs:[{a:first,b:end,y:slowYs[0]},{a:end,b:slowLow,y:slowYs[1]},{a:slowLow,b:end,y:slowYs[2]},{a:end,b:slowUpper,y:slowYs[3]},{a:slowUpper,b:end,y:slowYs[4]}]}};
+   for(let id of ['fast','mid','slow'])paths[id].length=routeDistance(paths[id].legs,finish,fy);
+   const fm=paths.fast.length,midRatio=paths.mid.length/fm,slowRatio=paths.slow.length/fm;
+   if(midRatio>=1.5&&midRatio<=2&&slowRatio>=3&&slowRatio<=3.5)break;
+ }
+ const requirements=mixChoices(['double','dash','grip']).slice(0,1+i%2); // 1 or 2 abilities, rotated across rooms.
+ paths.fast.requirements=['double','dash','grip'];paths.mid.requirements=requirements;paths.slow.requirements=[];
+ for(let id of ['fast','mid','slow']){paths[id].id=id;paths[id].waypoints=[];paths[id].progress=0;paths[id].complete=false;paths[id].layout=[]}
+ return paths;
+}
+function makeRoom(type,i){
+ const width=3850,floor=760,terminal=3550,exitX=3750,finishX=3475;
+ const paths=buildRoomPaths(i,floor),solids=[],ladders=[],hazards=[],signs=[],decor=[];
+ // The only shared ground is the common entrance and puzzle apron.
+ solids.push({x:0,y:floor,w:220,h:100,route:'lower'});
+ solids.push({x:3370,y:floor,w:width-3370,h:100,route:'lower'});
+ const motifNames=['notched bridge','split stair','tilted teeth','side gap','overhead bite','zigzag pit','opposed ledges','piston pinch','narrow shelf','hidden drop','offset crawl','sawtooth pass','broken rung','return spur','switchback arch','falling shelf','suspended bridge','forked pit','compression gate','offset laser','teetering stairs','low bridge','blind lip','needle crossing'];
+ // Distinct procedural motif orders for every room; shared art assets remain unchanged.
+ const shuffled=mixChoices(Array.from({length:6},(_,k)=>i*6+k));
+ function addMarker(path,leg,x,y,kind='',label=''){
+   path.waypoints.push({x,y,kind,label:label||kind.toUpperCase(),leg,passed:false});
+ }
+ function addLeg(path,leg,legIndex){
+   const id=path.id,dir=Math.sign(leg.b-leg.a),min=Math.min(leg.a,leg.b),max=Math.max(leg.a,leg.b),len=max-min;
+   const events=[],holes=[];let level=leg.y;
+   const n=Math.max(3,Math.round(len/440));
+   // Topology varies: each chunk uses a different combination of holes, stairs, overheads, and hazards.
+   for(let j=0;j<n;j++){
+     let f=(j+.52)/n,pos=leg.a+(leg.b-leg.a)*f;
+     let motif=shuffled[(j+legIndex*3+(id==='fast'?2:id==='mid'?6:9))%shuffled.length];
+     path.layout.push(`${id}/${legIndex}/${j}/${motif}`);
+     let gap=motif%4===0?0:Math.min(id==='slow'?91:id==='mid'?103:112,65+motif%4*15+Math.floor(random()*18));
+     // A floor hole on the slow bottom lane is dangerous. Other lanes fall to recovery paths.
+     if(gap && Math.abs(pos-leg.a)>190 && Math.abs(pos-leg.b)>190)holes.push({x:pos,w:gap});
+     if((motif%3===0 || (i===3&&motif%5===0)) && Math.abs(pos-leg.a)>170 && Math.abs(pos-leg.b)>170){
+       hazards.push({x:pos+dir*88,y:level-12,w:24+random()*14,h:12,type:'spike',route:id});
+     }else if(motif%4===2 && j>0 && j<n-1){
+       solids.push({x:pos-50,y:level-41,w:55,h:10,route:id,oneway:true});
+     }
+     if((motif%3===1 || (i===0&&j%4===2)) && j>0 && j<n-1){
+       solids.push({x:pos+dir*45-18,y:level-67,w:44,h:10,route:id,oneway:true});
+     }
+     decor.push({x:pos,y:level-90,mark:motifNames[motif],color:ROUTE_META[id].color});
+   }
+   // Required controls are actual course obstacles, not mere upgrade ownership labels.
+   const required=[];
+   if(id==='fast'){
+     if(legIndex===0)required.push(['double',.48]);
+     if(legIndex===1)required.push(['tiny',path.legs.length===3?.33:.51]);
+     if(legIndex===path.legs.length-2)required.push(['dash',path.legs.length===3?.68:.5]);
+     if(legIndex===path.legs.length-1)required.push(['grip',.52]);
+   }
+   if(id==='mid'){
+     if(legIndex===0)required.push([path.requirements[0],.43]);
+     if(legIndex===1)required.push(['tiny',.48]);
+     if(legIndex===2&&path.requirements[1])required.push([path.requirements[1],.55]);
+   }
+   if(id==='slow'&&(legIndex===1||legIndex===3))required.push(['tiny',.51]);
+   // The first lower-route section also has a tiny passage, never a no-shrink bypass.
+   if(id==='slow'&&legIndex===0)required.push(['tiny',.60]);
+   for(let [kind,f] of required){
+     let x=leg.a+(leg.b-leg.a)*f,markX=x;
+     holes.splice(0,holes.length,...holes.filter(h=>Math.abs(h.x-x)>210));
+     if(kind==='tiny'){
+       // 17px clearance; only the 13px tall tiny form can use this physical tunnel.
+       solids.push({x:x-85,y:level-43,w:170,h:26,route:id,gate:'tiny'});
+       signs.push({x,y:level-105,label:'E ×2 / TINY SLOT',color:'#89d3ad',route:id});
+     }else if(kind==='double'){
+       const w=id==='fast'?330:235;
+       holes.push({x,w});markX=x+dir*(w/2+45);
+       signs.push({x,y:level-110,label:'DOUBLE JUMP · SPACE ×2',color:'#edc16b',route:id});
+     }else if(kind==='dash'){
+       hazards.push({x:x-5,y:level-94,w:10,h:94,type:'laser',phase:random()*6.28,route:id});markX=x+dir*58;
+       signs.push({x,y:level-119,label:'DASH · SHIFT',color:'#edc16b',route:id});
+     }else if(kind==='grip'){
+       solids.push({x:x-12,y:level-76,w:24,h:76,route:id,gate:'grip'});markX=x+dir*55;
+       signs.push({x,y:level-120,label:'WALL KICK · MAGNETIC GRIP',color:'#edc16b',route:id});
+     }
+     events.push({x:markX,y:level,kind,label:kind==='tiny'?'TINY / E ×2':kind==='double'?'DOUBLE JUMP':kind==='dash'?'PHASE DASH':'WALL KICK'});
+   }
+   // Only actual movement gates and physical turn points advance progression.
+   events.sort((a,b)=>(a.x-b.x)*dir);
+   for(let e of events)if(e.kind||holes.every(h=>Math.abs(h.x-e.x)>h.w/2+18))addMarker(path,legIndex,e.x,e.y,e.kind,e.label);
+   addMarker(path,legIndex,leg.b,level,'turn',legIndex===path.legs.length-1?'LAST TURN':'NEXT TIER');
+   holes.sort((a,b)=>a.x-b.x);
+   let cursor=min;
+   for(let h of holes){let left=Math.max(min,h.x-h.w/2),right=Math.min(max,h.x+h.w/2);
+     if(left>cursor+12)solids.push({x:cursor,y:level,w:left-cursor,h:16,oneway:true,route:id});
+     cursor=Math.max(cursor,right);
+   }
+   if(max>cursor+12)solids.push({x:cursor,y:level,w:max-cursor,h:16,oneway:true,route:id});
+   // Recovery steps beside gaps; jumping still takes timing. No speed belts or conveyors.
+   for(let h of holes){
+     if(h.w<180 && random()<(i===0?.83:i===1?.28:i===2?.65:.45))solids.push({x:h.x-19,y:level-50,w:38,h:9,route:id,oneway:true});
+   }
+   if(legIndex>0){
+     const prev=path.legs[legIndex-1];let top=Math.min(prev.y,level),bot=Math.max(prev.y,level);
+     ladders.push({x:leg.a-13,y:top-2,w:26,h:bot-top+8,route:id,turn:true});
+   }
+ }
+ for(let id of ['slow','mid','fast']){
+   const path=paths[id];
+   path.legs.forEach((leg,j)=>addLeg(path,leg,j));
+   // Every selected route starts at the identical entrance and reaches the identical puzzle apron.
+   path.waypoints.push({x:finishX,y:floor,kind:'finish',label:'PUZZLE ACCESS',leg:path.legs.length,passed:false});
+   if(id!=='slow'){
+     let y=path.legs[0].y;ladders.push({x:179,y:y-3,w:26,h:floor-y+7,route:id,entry:true});
+   }
+   const lastY=path.legs.at(-1).y;
+   if(lastY!==floor)ladders.push({x:3395,y:lastY-2,w:26,h:floor-lastY+5,route:id,exit:true});
+ }
+ signs.push({x:170,y:floor-31,label:'START / CHOOSE A ROUTE',color:'#edc16b'});
+ signs.push({x:3500,y:floor-170,label:'ALL ROUTES JOIN HERE',color:'#89d3ad'});
+ const shift=Math.floor(random()*15);
+ return{type,solved:false,width,floor,terminal,exitX,layered:i%2===0,solids,ladders,hazards,signs,decor,paths,route:null,routeComplete:false,routeProgress:0,
+ phase:random()*6.28,boxStart:terminal-120,box:{x:terminal-120,y:floor-38,w:38,h:38},plateX:terminal+40+shift,
+ seq:Array.from({length:4},()=>Math.floor(random()*4)),target:.35+random()*.35,mirrors:[Math.floor(random()*2),Math.floor(random()*2),Math.floor(random()*2)]};
+}
+function offerRoutes(){
+ state='route';const base=room.paths.fast.length;
+ const btn=(id)=>{const path=room.paths[id],lack=path.requirements.filter(k=>!save[k]),able=lack.length===0,mult=(path.length/base).toFixed(2),label=ROUTE_META[id].name;
+ return `<div class="row"><div style="max-width:480px"><strong style="color:${ROUTE_META[id].color}">${label}</strong><span class="small"> · ${mult}× DISTANCE</span><p>${id==='slow'?'No movement ability required; long switchback route.':id==='mid'?'Technical route with '+path.requirements.length+' required movement '+(path.requirements.length===1?'ability.':'abilities.'):'Direct expert line; use all three movement abilities.'}<br><b style="color:#a4bcba">Required:</b> shrink to tiny${path.requirements.length?', '+path.requirements.map(k=>ABILITY_NAMES[k]).join(', '):''}.</p>${lack.length?`<span class="small" style="color:#f2a59b">Missing: ${lack.map(k=>ABILITY_NAMES[k]).join(', ')}</span>`:''}</div><button class="${able?'primary':'secondary'}" ${able?'':'disabled'} onclick="chooseRoute('${id}')">${able?'Take route':'Locked'}</button></div>`};
+ show(`<div class="panel" style="width:min(760px,94%)"><div class="eyebrow">Chamber ${roomIndex+1} / route selection</div><h2>One lock. Three ways in.</h2><p>Every route starts here and joins the same puzzle. The fastest route is shorter, not artificially faster. Follow the actual platforms, shrink through security slots, and use the abilities required by your route.</p>${['fast','mid','slow'].map(btn).join('')}<div class="small">Route distances: fast ${Math.round(room.paths.fast.length)} · middle ${Math.round(room.paths.mid.length)} · slow ${Math.round(room.paths.slow.length)} world units. A / D move · W / S ladders · E shrink · Q grow · R restart route (+5s).</div></div>`);
+}
+function chooseRoute(id){if(state!=='route'||!room.paths[id]||room.paths[id].requirements.some(k=>!save[k]))return;
+ room.route=id;room.routeProgress=0;room.routeComplete=false;routeName=ROUTE_META[id].name;
+ p.abilityUses=[];state='play';hide();tone(580);toast(ROUTE_META[id].name+' chosen. Follow the highlighted route beacons →');
+}
+function recordAbility(name){if(room?.route&&state==='play')p.abilityUses.push({name,x:p.x+p.w/2,y:p.y+p.h/2,after:room.routeProgress,t:worldTime});}
+function checkRouteProgress(){if(!room.route||room.routeComplete)return;
+ let path=room.paths[room.route],point=path.waypoints[room.routeProgress];if(!point)return;
+ let middle=p.x+p.w/2,feet=p.y+p.h;
+ if(Math.abs(middle-point.x)>66||Math.abs(feet-point.y)>39)return;
+ if(point.kind==='tiny'&&p.size!==2)return;
+ if(['double','dash','grip'].includes(point.kind)){
+   const used=p.abilityUses.some(a=>a.name===point.kind&&a.after===room.routeProgress&&Math.abs(a.x-point.x)<265&&Math.abs(a.y-point.y)<170);
+   if(!used)return;
+ }
+ point.passed=true;room.routeProgress++;tone(point.kind?720:520,.05);
+ if(point.kind==='turn'&&path.legs.length>point.leg+1)toast(room.route==='fast'?'Next catwalk: climb or descend to its height.':'Turn reached. Take the ladder to the next tier, then reverse direction.');
+ if(point.kind==='finish'){
+   room.routeComplete=true;toast('Route cleared! The puzzle is now accessible.');burst(point.x,point.y-40,'#89d3ad',25);
+ }
+}
+function resetRoute(){if(state!=='play')return;
+ const path=room.paths[room.route];if(path){for(let q of path.waypoints)q.passed=false;room.routeProgress=0;room.routeComplete=false}
+ room.box.x=room.boxStart;respawn();p.inv=0;p.abilityUses=[];elapsed+=5;
+}
+function startRun(practice=false){mode=practice?'practice':'heist';seed=Math.floor(Math.random()*2147483647);let initialSeed=seed,types=['plate','memory','timing','mirror'];for(let i=3;i>0;i--){let j=Math.floor(random()*(i+1));[types[i],types[j]]=[types[j],types[i]]}rooms=(practice?['plate']:types).map(makeRoom);rooms.seed=initialSeed;roomIndex=0;elapsed=0;penalty=0;earnedInRun=0;hearts=startingHearts();alarm=false;alarmAge=0;hunters=[];deathReason='';enterRoom();toast(practice?'Practice: pick a route. No patrol timer, no payout.':startingHearts()+' '+(startingHearts()===1?'heart':'hearts')+'. Choose your route. Five minutes until patrollers.');}
+function enterRoom(){room=rooms[roomIndex];p={x:70,y:room.floor-38,w:22,h:38,size:0,vx:0,vy:0,ground:true,jumps:0,face:1,dash:0,cool:0,inv:0,wall:0,abilityUses:[]};camX=0;camY=210;puzzle=null;particles=[];offerRoutes();if(alarm)spawnHunters();}
+function respawn(){Object.assign(p,{x:70,y:room.floor-38,vx:0,vy:0,inv:1.5,size:0,w:22,h:38,jumps:0,dash:0,ground:true});}
+function rect(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y}
+function solids(){return room.solids.concat(room.solved?[]:[{x:room.exitX,y:0,w:18,h:room.floor}]);}
+function resize(dir){const sizes=[[22,38],[14,24],[8,13]],n=Math.max(0,Math.min(2,p.size+dir));let [w,h]=sizes[n],q={x:p.x+(p.w-w)/2,y:p.y+p.h-h,w,h};if(solids().some(s=>rect(q,s))||(room.type==='plate'&&rect(q,room.box))){tone(155);return}Object.assign(p,q,{size:n});tone(700-n*160);burst(p.x+p.w/2,p.y+p.h/2,'#89d3ad',12)}
+function jump(){if(p.ground||p.jumps===0&&p.coyote>0){p.vy=-440*jumpMultiplier();p.jumps=1;p.ground=false;p.coyote=0;tone(330)}else if(save.double&&p.jumps<2){p.vy=-420*jumpMultiplier();p.jumps=2;recordAbility('double');tone(480);burst(p.x,p.y,'#edc16b',8)}else if(save.grip&&p.wall){p.vy=-430*jumpMultiplier();p.vx=-p.wall*250;p.x-=p.wall*7;recordAbility('grip');tone(420)}}
+function hurt(){if(p.inv>0||state!=='play')return;hearts--;cameraShake=8;tone(110,.2);if(hearts<=0){deathReason='You lost your last heart.';finish(false);return}resetRouteAfterHit();toast('Hazard hit. Back to route start — '+hearts+' hearts remaining.');}
+function resetRouteAfterHit(){const path=room.paths[room.route];if(path){path.waypoints.forEach(q=>q.passed=false)}room.routeProgress=0;room.routeComplete=false;respawn();p.abilityUses=[]}
+function burst(x,y,c,n){for(let i=0;i<n;i++)particles.push({x,y,vx:(Math.random()-.5)*180,vy:(Math.random()-.7)*180,life:.7,c})}
+function solve(){if(room.solved)return;room.solved=true;if(mode==='heist'){const payout=puzzlePayout();earnedInRun+=payout;save.cash+=payout;persist()}puzzle=null;state='play';hide();tone(900,.25);burst(room.exitX,room.floor-80,'#89d3ad',35);}
+function use(){if(p.x>room.exitX-55&&room.solved){if(roomIndex===rooms.length-1)finish(true);else{roomIndex++;enterRoom();toast('New chamber: '+names[room.type]+'. '+hearts+' hearts remaining.')}return}if(room.type!=='plate'&&Math.abs(p.x-room.terminal)<100&&p.y>room.floor-100){if(!room.routeComplete){toast('Complete every route beacon before the mechanism opens.');return}openPuzzle();return}if(room.type==='plate'&&Math.abs(p.x-room.terminal)<180)toast('Grow with Q. Push the brass crate right onto the green plate.');else toast('Move beside a terminal or the open exit and press F.');}
+function openPuzzle(){if(room.solved)return;state='puzzle';puzzle={type:room.type,progress:0,watch:true,started:worldTime,hits:0,miss:0,mirrors:room.mirrors.slice()};renderPuzzle()}
+function renderPuzzle(){let t=puzzle.type,body='';if(t==='memory')body=`<p>Watch the four flashes, then repeat their order. Use the buttons or keys 1–4.</p><div class="puzzleButtons">${['Ⅰ','Ⅱ','Ⅲ','Ⅳ'].map((x,i)=>`<button class="pad" id="pad${i}" onclick="memoryPress(${i})">${x}</button>`).join('')}</div><div class="status" id="pstatus">Watch carefully…</div><button class="secondary" onclick="replayMemory()">Replay sequence</button>`;
+if(t==='timing')body=`<p>Stop the needle inside the green zone three times. Press Space or the button. A miss resets the streak.</p><div class="track"><div class="zone" style="left:${room.target*100-8}%;width:16%"></div><div class="needle" id="needle"></div></div><div class="status" id="pstatus">0 / 3 pins aligned</div><button class="primary" onclick="timingPress()">Set pin · SPACE</button>`;
+if(t==='mirror')body=`<p>Rotate the three mirrors to carry light from the emitter (→) into the receiver (◎). Click a mirror or press 1–3.</p><div class="beamgrid" id="beamgrid"></div><div class="status" id="pstatus">Complete the beam path.</div><button class="primary" onclick="checkMirror()">Test beam · SPACE</button>`;
+show(`<div class="panel"><div class="eyebrow">Mechanism ${roomIndex+1} / ${names[t]}</div><h2>${t==='memory'?'Remember the signal.':t==='timing'?'Timing is everything.':'Bend the light.'}</h2>${body}<div style="margin-top:22px"><button class="mute" onclick="closePuzzle()">← Return to lock · ESC (timer and patrollers keep running)</button></div></div>`);if(t==='mirror')drawMirror()}
+function closePuzzle(){puzzle=null;state='play';hide()}
+function replayMemory(){puzzle.progress=0;puzzle.watch=true;puzzle.started=worldTime;document.getElementById('pstatus').textContent='Watch carefully…'}
+function memoryPress(i){if(!puzzle||puzzle.type!=='memory'||puzzle.watch)return;tone(300+i*160);if(i===room.seq[puzzle.progress]){puzzle.progress++;document.getElementById('pstatus').textContent=puzzle.progress+' / 4 correct';if(puzzle.progress===4)solve()}else{document.getElementById('pstatus').textContent='Wrong signal. Watch again…';puzzle.progress=0;puzzle.watch=true;puzzle.started=worldTime+.6;tone(100)}}
+function timingValue(){return .5+.47*Math.sin((worldTime-puzzle.started)*2.5+room.phase)}
+function timingPress(){if(!puzzle||puzzle.type!=='timing')return;if(Math.abs(timingValue()-room.target)<.08){puzzle.hits++;tone(700);if(puzzle.hits===3){solve();return}}else{puzzle.hits=0;tone(140)}document.getElementById('pstatus').textContent=puzzle.hits+' / 3 pins aligned'}
+function mirrorPath(){let x=-1,y=3,dx=1,dy=0,path=[],win=false,positions=[[1,3],[1,1],[3,1]];for(let k=0;k<30;k++){x+=dx;y+=dy;if(x<0||x>4||y<0||y>4)break;path.push(y*5+x);if(x===3&&y===4){win=true;break}let j=positions.findIndex(a=>a[0]===x&&a[1]===y);if(j>=0){[dx,dy]=puzzle.mirrors[j]===0?[-dy,-dx]:[dy,dx]}}return{path,win}}
+function drawMirror(){const ids=[16,6,8];document.getElementById('beamgrid').innerHTML=Array.from({length:25},(_,i)=>{const j=ids.indexOf(i);return `<button class="beamcell" ${j<0?'disabled':''} ${j>=0?`onclick="rotateMirror(${j})" aria-label="Rotate mirror ${j+1}"`:''}>${j>=0?(puzzle.mirrors[j]===0?'╱':'╲'):i===15?'→':i===23?'◎':''}</button>`}).join('')}
+function rotateMirror(i){if(!puzzle||puzzle.type!=='mirror')return;puzzle.mirrors[i]^=1;tone(440);drawMirror()}
+function checkMirror(){if(mirrorPath().win)solve();else{tone(120);document.getElementById('pstatus').textContent='Beam lost. Try another mirror orientation.'}}
+function pause(){if(state==='puzzle'){closePuzzle();return}if(state!=='play')return;state='paused';show(`<div class="panel"><div class="eyebrow">Heist paused / timer stopped</div><h2>Take a breath.</h2><p>Four mechanisms. Three sizes. One very small burglar.</p><div class="actions"><button class="primary" onclick="resume()">Resume heist</button><button class="secondary" onclick="home()">Abandon run</button></div></div>`)}function resume(){state='play';hide()}
+function finish(win){if(state==='result')return;state='result';const time=elapsed,reward=earnedInRun;
+ if(win&&mode==='heist'){save.best=Math.max(save.best,reward);persist()}
+ show(`<div class="panel"><div class="eyebrow">${mode==='practice'?'Training complete':win?'Contract complete':'Security breach'}</div><h2>${win?'Small thief. Big score.':'Heist over.'}</h2><p>${mode==='practice'?'You’re ready for the real thing. All four mechanisms await.':win?'The vault is open, the loot is yours, and nobody saw a thing.':'You keep the cash earned from every completed puzzle. '+deathReason}</p><div class="row"><span>Run time</span><strong>${clock(time)}</strong></div><div class="row"><span>Mechanisms released</span><strong>${rooms.filter(r=>r.solved).length} / ${rooms.length}</strong></div><div class="row"><span>Cash earned this run</span><strong style="color:#edc16b">$${reward.toLocaleString()}</strong></div><div class="actions"><button class="primary" onclick="startRun()">Another heist ↗</button><button class="secondary" onclick="shop()">Upgrade gear</button></div><button class="mute" onclick="home()">Back to hideout</button></div>`)}
+function clock(t){t=Math.max(0,Math.floor(t));return String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0')}
+window.addEventListener('keydown',e=>{if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();if(e.repeat)return;keys[e.code]=true;if(e.code==='Escape'){if(state==='paused')resume();else pause();return}if(state==='puzzle'){let i=Number(e.key)-1;if(i>=0&&i<4){if(puzzle.type==='memory')memoryPress(i);else if(puzzle.type==='mirror'&&i<3)rotateMirror(i)}if(e.code==='Space'){if(puzzle.type==='timing')timingPress();if(puzzle?.type==='mirror')checkMirror()}return}if(state!=='play')return;if(e.code==='Space')jump();if(e.code==='KeyE')resize(1);if(e.code==='KeyQ')resize(-1);if(e.code==='KeyF')use();if(e.code==='KeyR')resetRoute();if((e.code==='ShiftLeft'||e.code==='ShiftRight')&&save.dash&&p.cool<=0){p.dash=.2;p.cool=1.2;p.vy=0;recordAbility('dash');tone(220)}});
+window.addEventListener('keyup',e=>keys[e.code]=false);window.addEventListener('blur',()=>{keys={};if(state==='play')pause()});
+
+function navigationGrid(){const step=40,cols=Math.ceil(room.width/step),rows=23,blocked=new Set();for(let y=0;y<rows;y++)for(let x=0;x<cols;x++){let q={x:x*step+8,y:y*step+8,w:24,h:24};if(solids().some(s=>rect(q,s)))blocked.add(y*cols+x)}return{step,cols,rows,blocked};}
+function nodeNear(x,y,g){let best=-1,dist=Infinity;for(let i=0;i<g.cols*g.rows;i++){if(g.blocked.has(i))continue;let dx=(i%g.cols)*g.step+20-x,dy=Math.floor(i/g.cols)*g.step+20-y,d=dx*dx+dy*dy;if(d<dist){best=i;dist=d}}return best;}
+function huntPath(h){let g=room.nav||(room.nav=navigationGrid()),start=nodeNear(h.x,h.y,g),end=nodeNear(p.x+p.w/2,p.y+p.h/2,g);if(start<0||end<0)return[];let queue=[start],prev=new Map([[start,-1]]);for(let q=0;q<queue.length;q++){let n=queue[q];if(n===end)break;let x=n%g.cols,y=Math.floor(n/g.cols);for(let [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){let xx=x+dx,yy=y+dy,j=yy*g.cols+xx;if(xx<0||xx>=g.cols||yy<0||yy>=g.rows||g.blocked.has(j)||prev.has(j))continue;prev.set(j,n);queue.push(j)}}if(!prev.has(end))return[];let path=[],n=end;while(n!==start){path.push({x:(n%g.cols)*40+20,y:Math.floor(n/g.cols)*40+20});n=prev.get(n)}return path.reverse();}
+function spawnHunters(){room.nav=navigationGrid();let g=room.nav,candidates=[];for(let n=0;n<g.cols*g.rows;n++){let x=n%g.cols*40+20,y=Math.floor(n/g.cols)*40+20;if(!g.blocked.has(n)&&Math.hypot(x-p.x,y-p.y)>650&&Math.hypot(x-p.x,y-p.y)<1100)candidates.push({x,y})}hunters=[0,1].map((_,i)=>{let q=candidates[Math.floor(candidates.length*(i?.8:.2))]||{x:room.width-100,y:220};return{...q,path:[],repath:0,warmup:3}});}
+function activateAlarm(){alarm=true;alarmAge=0;spawnHunters();tone(130,.5);toast('05:00 — PATROLLERS ACTIVE. Keep moving. Capture is game over.');}
+function updateHunters(dt){alarmAge+=dt;for(let h of hunters){h.warmup-=dt;if(h.warmup>0)continue;h.repath-=dt;if(h.repath<=0){h.path=huntPath(h);h.repath=.65}let target=h.path[0];if(target){let dx=target.x-h.x,dy=target.y-h.y,d=Math.hypot(dx,dy),v=(110+Math.min(45,alarmAge*.18))*dt;if(d<=v){h.x=target.x;h.y=target.y;h.path.shift()}else{h.x+=dx/d*v;h.y+=dy/d*v}}
+ if(Math.hypot(h.x-(p.x+p.w/2),h.y-(p.y+p.h/2))<30){deathReason='A patroller caught you. Capture ends the run, regardless of hearts.';finish(false);return}}
+}
+function update(dt){
+ let active=state==='play'||state==='puzzle';if(active)worldTime+=dt;
+ // Silent HUD: no floating text or toasts during a heist.
+ if(active){elapsed+=dt;if(mode==='heist'&&!alarm&&elapsed>=300)activateAlarm();if(alarm){updateHunters(dt);if(state==='result')return}}
+ if(state==='puzzle'&&puzzle){
+ if(puzzle.type==='timing')document.getElementById('needle').style.left=timingValue()*100+'%';
+ if(puzzle.type==='memory'){let t=worldTime-puzzle.started,idx=Math.floor(t/.8),on=t>=0&&idx<4&&t%.8<.5;for(let i=0;i<4;i++)document.getElementById('pad'+i).classList.toggle('lit',on&&room.seq[idx]===i);if(t>3.4&&puzzle.watch){puzzle.watch=false;document.getElementById('pstatus').textContent='Your turn · 1 2 3 4'}}}
+ if(state!=='play')return;
+ p.inv=Math.max(0,p.inv-dt);p.cool-=dt;p.dash=Math.max(0,p.dash-dt);let move=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0);if(move)p.face=move;
+ p.vx=p.dash>0?p.face*650:move*(210*(1+SPEED_BONUSES[save.speed]))*(p.size===2?.85:1);p.vy=p.dash>0?0:Math.min(650,p.vy+1050*dt);
+ let ladder=room.ladders.find(l=>rect(p,{x:l.x-5,y:l.y-15,w:l.w+10,h:l.h+15}));let climbing=ladder&&(keys.KeyW||keys.KeyS);
+ if(climbing){p.vy=(keys.KeyS?1:-1)*165;p.jumps=0;p.ground=true}
+ p.wall=0;p.x+=p.vx*dt;
+ for(const s of solids())if(!s.oneway&&rect(p,s)){if(p.vx>0){p.x=s.x-p.w;p.wall=1}else if(p.vx<0){p.x=s.x+s.w;p.wall=-1}}
+ if(room.type==='plate'&&rect(p,room.box)){let b=room.box;if(p.size===0){b.x=Math.max(room.terminal-180,Math.min(room.exitX-50,b.x+p.vx*dt));if(p.vx>0)p.x=b.x-p.w;else if(p.vx<0)p.x=b.x+b.w}else{if(p.vx>0)p.x=b.x-p.w;else if(p.vx<0)p.x=b.x+b.w}}
+ p.x=Math.max(8,Math.min(room.width-p.w-8,p.x));let wasGround=p.ground,oldBottom=p.y+p.h;p.ground=false;p.y+=p.vy*dt;
+ for(const s of solids().concat(room.type==='plate'?[room.box]:[])){
+ if(s.oneway&&(p.vy<0||oldBottom>s.y+3||climbing))continue;
+ if(rect(p,s)){if(p.vy>=0){p.y=s.y-p.h;p.vy=0;p.ground=true;p.jumps=0}else{p.y=s.y+s.h;p.vy=0}}}
+ p.coyote=p.ground?.1:Math.max(0,(p.coyote||0)-dt);if(wasGround&&!p.ground)p.coyote=.1;
+ for(let h of room.hazards){let box=h;if(h.type==='laser'){if(Math.sin(worldTime*2+h.phase)<.15||p.dash>0)continue}else if(h.type==='crusher')box={x:h.x-35,y:h.y,w:75,h:30+110*Math.pow(Math.max(0,Math.sin(worldTime*1.7+h.phase)),5)};if(rect(p,box)){hurt();break}}
+ if(state!=='play')return;if(p.y>900)hurt();
+ checkRouteProgress();
+ if(room.type==='plate'&&!room.solved&&room.routeComplete&&Math.abs(room.box.x+19-room.plateX)<23)solve();
+ if(p.x>room.exitX+25&&room.solved){use();return}
+ routeName=room.route?ROUTE_META[room.route].name:'SELECT ROUTE';
+ camX+=(Math.max(0,Math.min(room.width-1200,p.x-400))-camX)*Math.min(1,dt*7);
+ camY+=(Math.max(0,Math.min(220,p.y-370))-camY)*Math.min(1,dt*6);
+ for(const a of particles){a.x+=a.vx*dt;a.y+=a.vy*dt;a.vy+=200*dt;a.life-=dt}particles=particles.filter(a=>a.life>0);cameraShake*=.85;
+}
+
+function text(s,x,y,color='#a4b6b5',size=12,align='left'){ctx.fillStyle=color;ctx.font=`${size}px monospace`;ctx.textAlign=align;ctx.fillText(s,x,y)}
+function block(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(x,y,w,h)}
+function gear(x,y,r,rot){ctx.save();ctx.translate(x,y);ctx.rotate(rot);ctx.strokeStyle='#91a59b';ctx.globalAlpha=.065;ctx.lineWidth=14;ctx.beginPath();ctx.arc(0,0,r,0,7);ctx.stroke();for(let i=0;i<12;i++){ctx.rotate(Math.PI/6);ctx.fillStyle='#91a59b';ctx.fillRect(r-4,-8,22,16)}ctx.restore()}
+
+function draw(){
+ ctx.clearRect(0,0,1200,650);let grad=ctx.createLinearGradient(0,0,0,650);grad.addColorStop(0,'#17272e');grad.addColorStop(1,'#0c171f');ctx.fillStyle=grad;ctx.fillRect(0,0,1200,650);
+ if(!room)return;
+ ctx.save();ctx.beginPath();ctx.rect(0,87,1200,545);ctx.clip();
+ for(let x=-camX*.25%300;x<1400;x+=300){gear(x,300-camY*.2,110,worldTime*.025);block(x+130,120,2,500,'#91a59b09')}
+ ctx.translate(-camX,-camY);if(cameraShake)ctx.translate((Math.random()-.5)*cameraShake,(Math.random()-.5)*cameraShake);
+ // Faint corridor bands make the three choices readable as the camera scrolls.
+ block(0,250,room.width,80,'#edc16b07');block(0,430,room.width,90,'#83cbd208');block(0,680,room.width,80,'#89d3ad07');
+ for(let s of room.solids){if(s.x+s.w<camX||s.x>camX+1200)continue;let color=s.route==='fast'?'#b79c65':s.route==='middle'?'#62949c':'#627d7b';block(s.x,s.y,s.w,s.h,s.route==='crawl'?'#2d3d43':'#293d43');block(s.x,s.y,s.w,3,color);if(s.route==='fast'&&s.oneway){for(let bx=s.x+14;bx<s.x+s.w-10;bx+=70)block(bx,s.y+8,10,3,'#8b815d')}if(s.h>35)for(let x=s.x+16;x<s.x+s.w;x+=50)block(x,s.y+15,4,4,'#71827a')}
+ for(let l of room.ladders){block(l.x,l.y,3,l.h,'#536e71');block(l.x+l.w-3,l.y,3,l.h,'#536e71');for(let y=l.y;y<l.y+l.h;y+=17)block(l.x,y,l.w,3,'#5f797b')}
+ // All route beacons and signs are removed; the physical obstacles guide the route.
+ for(let h of room.hazards){if(h.type==='spike'){for(let x=h.x;x<h.x+h.w;x+=14){ctx.fillStyle='#da8173';ctx.beginPath();ctx.moveTo(x,h.y+h.h);ctx.lineTo(x+7,h.y);ctx.lineTo(x+14,h.y+h.h);ctx.fill()}}
+ else if(h.type==='laser'){let on=Math.sin(worldTime*2+h.phase)>.15;block(h.x-9,h.y-12,27,12,'#617777');block(h.x,h.y,h.w,h.h,on?'#f2786d':'#f2786d25')}
+ else {let height=30+110*Math.pow(Math.max(0,Math.sin(worldTime*1.7+h.phase)),5);block(h.x,h.y,10,height,'#657d7c');block(h.x-35,h.y+height-20,75,20,'#b1866b')}}
+ const tx=room.terminal,fy=room.floor;
+ if(room.type==='plate'){block(room.plateX-25,fy-5,50,5,room.solved?'#89d3ad':'#779e8d');let b=room.box;block(b.x,b.y,b.w,b.h,'#b19059');ctx.strokeStyle='#ecd099';ctx.strokeRect(b.x+5,b.y+5,28,28);text('↔',b.x+19,b.y+25,'#332c25',20,'center')}
+ else{block(tx-30,fy-65,60,65,'#32474d');block(tx-23,fy-58,46,27,room.solved?'#89d3ad':'#b79b64');text(room.solved?'✓':room.type==='memory'?'ⅠⅡⅢ':room.type==='timing'?'◴':'╱',tx,fy-38,'#18272d',18,'center')}
+ block(room.exitX,fy-145,18,145,room.solved?'#365b50':'#9e7a55');for(let y=fy-135;y<fy;y+=25)block(room.exitX+3,y,12,8,room.solved?'#89d3ad':'#e2b369');
+ if(p&&(p.inv<=0||Math.floor(worldTime*12)%2)){let x=p.x,y=p.y,w=p.w,h=p.h;block(x-2,y+h+1,w+4,3,'#0005');block(x,y+h*.35,w,h*.52,'#cad3bf');block(x+w*.12,y,w*.76,h*.37,'#d1b98c');block(x-2,y+2,w+4,h*.13,'#18252a');block(x,y+h*.19,w,h*.11,'#1c2c32');block(x+(p.face>0?w*.65:w*.2),y+h*.2,2,2,'#89d3ad');block(x-3,y+h*.38,w*.2,h*.33,'#b68b52');let stride=Math.sin(worldTime*18)*(Math.abs(p.vx)>0?3:0);block(x,y+h*.84,w*.3,h*.16+stride,'#27363a');block(x+w*.65,y+h*.84,w*.3,h*.16-stride,'#27363a')}
+ for(let h of hunters){ctx.save();ctx.translate(h.x,h.y);ctx.shadowColor='#ed625e';ctx.shadowBlur=18;block(-15,-10,30,20,'#6d353b');block(-23,-4,46,7,'#b05555');block(-6,-5,12,10,h.warmup>0?'#edc16b':'#ff8677');ctx.shadowBlur=0;ctx.restore()}
+ for(const a of particles){ctx.globalAlpha=Math.max(0,a.life);block(a.x,a.y,3,3,a.c)}ctx.globalAlpha=1;ctx.restore();
+ // Wordless HUD: hearts, clock, earned cash, and progress dots only.
+ block(0,0,1200,87,'#101c23');
+ text('♥ '.repeat(hearts)+'♡ '.repeat(Math.max(0,3-hearts)),25,56,'#f2786d',25);
+ text(mode==='practice'?'∞':alarm?'+'+clock(elapsed-300):clock(300-elapsed),600,48,alarm?'#f2786d':'#e8e6d7',29,'center');
+ text('$'+earnedInRun.toLocaleString(),1170,48,'#edc16b',19,'right');
+ for(let i=0;i<rooms.length;i++)block(968+i*48,66,30,6,rooms[i].solved?'#89d3ad':i===roomIndex?'#edc16b':'#34474e');
+ // No text labels, captions, routes, or flashing hunt warnings.
+ let alertEl=document.getElementById('alarm');alertEl.style.opacity=alarm&&(state==='play'||state==='puzzle')?(reducedFlash?.12:.05+.18*(.5+.5*Math.sin(worldTime*Math.PI*2))):0;
+}
+
+function loop(ts){let dt=Math.min(.25,(ts-last)/1000||.016);last=ts;for(let rem=dt;rem>0;rem-=1/120)update(Math.min(1/120,rem));draw();requestAnimationFrame(loop)}
+home();requestAnimationFrame(loop);
+</script></body></html>
